@@ -48,10 +48,8 @@ router.delete('/pessoa/:id', async function (req, res) {
  * insert a pessoa
  */
 router.put('/pessoa', async function (req, res) {
-    // const {nome, telefone, data_nascimento, cargo } = req.body;
-    // console.log(nome);
-    const pessoa = req.body;
-    console.log(pessoa)
+    const {nome, telefone, data_nascimento, cargo } = req.body;
+
     return res.json({});
     const newPessoa = await client.pessoa.create({
         data: {
