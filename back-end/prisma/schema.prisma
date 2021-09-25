@@ -14,7 +14,7 @@ model Pessoa {
   id Int @id @default(autoincrement())
   nome String
   telefone String
-  data_nascimento DateTime @db.Date
+  idade Int
   cargo String
   usuario Usuario?
 }
@@ -25,5 +25,5 @@ model Usuario {
   id_pessoa Int
   email String @unique
   senha String
-  data_criacao DateTime @db.Date
+  data_criacao DateTime @db.Date @default(now())
 }
