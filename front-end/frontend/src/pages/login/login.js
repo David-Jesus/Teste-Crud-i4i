@@ -9,7 +9,8 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Route, useHistory, Switch, Redirect } from "react-router-dom";
-import CadastroCliente from '../CadastrarLivro/cadastrar';
+import Home from '../home/home'
+// import CadastroCliente from '../CadastrarLivro/cadastrar';
 // import '../login/login.css';
 
 const useStyles = makeStyles((theme) => ({
@@ -72,7 +73,7 @@ export default function SignIn() {
   if (redirect) {
     return <Redirect to='home' />;
   }
-  
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -124,14 +125,14 @@ export default function SignIn() {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="cadastrar-usuario" variant="body2">
+              <Link href="home" variant="body2">
                 {"Não tem uma conta? cadastre-se!"}
               </Link>
             </Grid>
           </Grid>
         </form>
       </div>
-      <Route path='/cadastrar-usuario' exact={true} component={CadastroCliente} />
+      <Route path='/cadastrar-usuario' exact={true} component={Home} />
     </Container>
   );
 }
