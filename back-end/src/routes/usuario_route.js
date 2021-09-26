@@ -96,7 +96,7 @@ router.post('/usuario', verifyJWT, async function (req, res) {
 /**
  * Verify login
  */
-router.post('/login', verifyJWT, async function(req, res) {
+router.post('/login', async function(req, res) {
     const email = req.body.email;
     const senha = req.body.senha;
 
