@@ -3,8 +3,8 @@ const router = Router();
 const client = require("../database/client");
 const jwt    = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
-const authConfig =  require("../config/auth")
-const { encrypt, decrypt} = require("../crypto/crypto");
+const authConfig =  require("../config/auth");
+
 
 /**
  * return all users
@@ -65,9 +65,6 @@ router.post('/usuario', async function (req, res) {
     const { id_pessoa, email} = req.body;
     const senha = bcrypt.hashSync(req.body.senha, 10);
 
-
-    console.log("senha: " + senha)
-    // return res.json({})
     const verify_id = await client.pessoa.findUnique({
         where: {id: Number(id_pessoa)}
     })
@@ -101,7 +98,6 @@ router.post('/usuario', async function (req, res) {
     }
 }
 });
-////
 
 /**
  * Verify login
@@ -133,6 +129,35 @@ router.post('/login', async function(req, res) {
     }
 });
 
+/**
+ * Alter a user
+ */
+router.put('/usuario/:id', async (req, res) => {
+    const { id } = req.params;
+    const {id_pessoa, email} = req.body;
+    const senha = bcrypt.hashSync(req.body.senha, 10);
+
+    const verify_id = await client.usuario.findUnique({
+        where: {id: Number(id)}
+    })
+
+    if(!verify_id) {
+        return res.status(404).json({"mesage": "Cadastro não localizado!"});
+    }
+    else {
+        const result = await client.usuario.update({
+            where: {
+                id: Number(id)
+             },
+            data: {
+                id_pessoa,
+                email,
+                senha
+            }
+        })
+        return res.status(200).json({result})
+    }
+}) 
 
 /**
  * router

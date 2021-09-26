@@ -79,6 +79,37 @@ router.post('/pessoa', async function (req, res) {
 });
 
 /**
+ * Alter a person
+ */
+router.put('/pessoa/:id', async (req, res) => {
+    const { id } = req.params;
+    const {nome, telefone, cargo, idade } = req.body;
+    
+    const verify_id = await client.pessoa.findUnique({
+        where: {id: Number(id)}
+    })
+
+    if(!verify_id) {
+        return res.status(404).json({"message": "Cadastro não localizado"});
+    }
+    else {
+        const result = await client.pessoa.update({
+            where: {
+                id: Number(id)
+             },
+            data: {
+                nome,
+                telefone,
+                cargo,
+                idade
+            }
+        })
+        return res.status(200).json({result})
+    }
+
+}) 
+
+/**
  * router
  */
 module.exports = router;
