@@ -2,9 +2,9 @@ const Router = require("express");
 const router = Router();
 const client = require("../database/client");
 const jwt    = require("jsonwebtoken");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const authConfig =  require("../config/auth");
-
+const authMiddleware = require("../middlewares/auth");
 
 /**
  * return all users
@@ -34,26 +34,6 @@ router.get('/usuario/:id', async function (req, res){
     } 
     else {
       return res.status(200).json(usuario);  
-    }
-});
-
-/**
- * delete a user by id
- */
-router.delete('/usuario/:id', async function (req, res) {
-    const { id } = req.params;
-    const verify_id = await client.usuario.findUnique({
-        where: {id: Number(id)}
-    })
-
-    if(!verify_id) {
-        res.status(404).json({"mesage": "Não foi possivel excluir o registro"});
-    } 
-    else {
-    const result = await client.usuario.delete({
-        where: {id: Number(id)}
-      })
-         res.status(200).json({"mesage": "Registro excluido com sucesso!"});  
     }
 });
 
@@ -99,6 +79,8 @@ router.post('/usuario', async function (req, res) {
 }
 });
 
+
+
 /**
  * Verify login
  */
@@ -126,6 +108,31 @@ router.post('/login', async function(req, res) {
             })
             return res.send({verify_login, token});
         }
+    }
+});
+
+/**
+ * router authMiddleware
+ */
+router.use(authMiddleware);
+
+/**
+ * delete a user by id
+ */
+ router.delete('/usuario/:id', async function (req, res) {
+    const { id } = req.params;
+    const verify_id = await client.usuario.findUnique({
+        where: {id: Number(id)}
+    })
+
+    if(!verify_id) {
+        res.status(404).json({"mesage": "Não foi possivel excluir o registro"});
+    } 
+    else {
+    const result = await client.usuario.delete({
+        where: {id: Number(id)}
+      })
+         res.status(200).json({"mesage": "Registro excluido com sucesso!"});  
     }
 });
 

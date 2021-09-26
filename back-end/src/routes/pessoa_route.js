@@ -1,7 +1,7 @@
 const Router   = require("express");
 const router   = Router();
 const client = require("../database/client");
-
+const authMiddleware = require("../middlewares/auth");
 
 /**
  * return all people
@@ -35,26 +35,6 @@ router.get('/pessoa/:id', async function (req, res){
 });
 
 /**
- * delete a person by id
- */
-router.delete('/pessoa/:id', async function (req, res) {
-    const { id } = req.params;
-    const verify_id = await client.pessoa.findUnique({
-        where: {id: Number(id)}
-    })
-
-    if(!verify_id) {
-        res.status(404).json({"mesage": "Não foi possivel excluir o registro"});
-    } 
-    else {
-    const result = await client.pessoa.delete({
-        where: {id: Number(id)}
-      })
-         res.status(200).json({"mesage": "Registro excluido com sucesso!"});  
-    }
-});
-
-/**
  * insert a person
  */
 router.post('/pessoa', async function (req, res) {
@@ -75,6 +55,31 @@ router.post('/pessoa', async function (req, res) {
     else {
         console.log('erro')
         return res.status(401).json({});
+    }
+});
+
+/**
+ * router authMiddleware
+ */
+ router.use(authMiddleware);
+
+/**
+ * delete a person by id
+ */
+ router.delete('/pessoa/:id', async function (req, res) {
+    const { id } = req.params;
+    const verify_id = await client.pessoa.findUnique({
+        where: {id: Number(id)}
+    })
+
+    if(!verify_id) {
+        res.status(404).json({"mesage": "Não foi possivel excluir o registro"});
+    } 
+    else {
+    const result = await client.pessoa.delete({
+        where: {id: Number(id)}
+      })
+         res.status(200).json({"mesage": "Registro excluido com sucesso!"});  
     }
 });
 
