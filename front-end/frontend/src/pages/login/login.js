@@ -39,10 +39,11 @@ export default function SignIn() {
 
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [token, setToken] = useState('');
   const [redirect, setState] = useState(false);
 
 
-  async function HandleCadastro(e) {
+  async function HandleLogin(e) {
     e.preventDefault();
 
     const dados = {
@@ -52,7 +53,19 @@ export default function SignIn() {
 
     try {
       if (email !== "" && senha !== "") {
+
         const login = api.post('login', dados);
+        const login_token = (await login).data.token;
+        alert(login_token);
+        setToken(login_token);
+        alert(token);
+
+        // const tok = JSON.stringify(login_token);
+          sessionStorage.setItem('token', login_token);
+         
+          // const c = JSON.parse(sessionStorage.getItem('token'));
+          // alert(c)
+          // console.info(c);
 
         if ((await login).status == 200) {
           setState({ redirect: true });
@@ -71,7 +84,7 @@ export default function SignIn() {
   const classes = useStyles();
 
   if (redirect) {
-    return <Redirect to='home' />;
+    return <Redirect to='lista-usuarios' />;
   }
 
   return (
@@ -81,7 +94,7 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Entrar
         </Typography>
-        {/* <form className={classes.form} noValidate onSubmit={HandleCadastro}> */}
+        {/* <form className={classes.form} noValidate onSubmit={HandleLogin}> */}
         <form className={classes.form} noValidate>
           <TextField
             variant="outlined"
@@ -114,16 +127,11 @@ export default function SignIn() {
             fullWidth
             variant="contained"
             color="primary"
-            onClick={HandleCadastro}
+            onClick={HandleLogin}
           >
             Entrar
           </Button>
           <Grid container>
-            <Grid item xs>
-              <Link href="recuperar-senha" variant="body2">
-                {"Esqueci a senha"}
-              </Link>
-            </Grid>
             <Grid item>
               <Link href="home" variant="body2">
                 {"Não tem uma conta? cadastre-se!"}
