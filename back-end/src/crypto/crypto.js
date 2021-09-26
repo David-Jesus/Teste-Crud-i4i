@@ -1,21 +1,21 @@
 
 const crypto = require('crypto');
-const { deprecate } = require('util');
-const initVector = crypto.randomBytes(16);
-
 const algorithm = 'aes-256-cbc';
-const secretKey = crypto.randomBytes(32);
+
+const initVector = crypto.randomBytes(16);
+const secretKey = 'vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3';
+
 
 const encrypt = (text) => {
     var mykey = crypto.createCipheriv(algorithm, secretKey, initVector);
-    var mystr = mykey.update(text, 'utf8', 'hex');
+    var mystr = mykey.update(text, 'utf-8', 'hex');
     return mystr += mykey.final('hex');
 
 };
 
 const decrypt = (text) => {
-    var mykey = crypto.createDecipheriv(algorithm, secretKey, initVector);
-    var mystr = mykey.update(text, 'hex', 'utf8')
+    var mykey = crypto.createDecipheriv(algorithm, secretKey);
+    var mystr = mykey.update(text, 'hex', 'utf-8');
     return mystr += mykey.final('utf8');
 
 };

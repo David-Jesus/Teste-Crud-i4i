@@ -1,8 +1,10 @@
-const Router   = require("express");
-const router   = Router();
-const client = require("../src/database/client");
-const { encrypt, decrypt} = require("../routes/crypto/crypto");
-
+const Router = require("express");
+const router = Router();
+const client = require("../database/client");
+const jwt    = require("jsonwebtoken");
+const bcrypt = require('bcrypt');
+const authConfig =  require("../config/auth")
+const { encrypt, decrypt} = require("../crypto/crypto");
 
 /**
  * return all users
@@ -55,13 +57,17 @@ router.delete('/usuario/:id', async function (req, res) {
     }
 });
 
+
 /**
  * insert a user
  */
 router.post('/usuario', async function (req, res) {
     const { id_pessoa, email} = req.body;
-    const senha = encrypt(req.body.senha);
+    const senha = bcrypt.hashSync(req.body.senha, 10);
 
+
+    console.log("senha: " + senha)
+    // return res.json({})
     const verify_id = await client.pessoa.findUnique({
         where: {id: Number(id_pessoa)}
     })
@@ -95,10 +101,14 @@ router.post('/usuario', async function (req, res) {
     }
 }
 });
+////
 
+/**
+ * Verify login
+ */
 router.post('/login', async function(req, res) {
     const email = req.body.email;
-    const senha = encrypt(req.body.senha);
+    const senha = req.body.senha;
 
     const verify_login = await client.usuario.findUnique({
         where: {
@@ -107,15 +117,18 @@ router.post('/login', async function(req, res) {
     })
 
     if(!verify_login) {
-        return res.status(404).json({"mesage": "Usuário não possui cadastro"});
+        return res.status(400).json({"mesage": "Usuário não possui cadastro"});
     } 
     else {
-  
-        if(verify_login.senha == senha){
-            return res.status(200).json({"mesage": "teste ok"});
+
+        if(!bcrypt.compareSync(senha, verify_login.senha)){
+            return res.status(404).json({"mesage": "Email ou senha incorretos!"});
         }
         else {
-            return res.status(404).json({"mesage": "Email ou senha incorretos!"})
+            const token = jwt.sign({id: verify_login.id}, authConfig.secret, {
+                expiresIn: 86400,
+            })
+            return res.send({verify_login, token});
         }
     }
 });
