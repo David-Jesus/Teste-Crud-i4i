@@ -1,7 +1,19 @@
 const Router   = require("express");
 const router   = Router();
 const client = require("../database/client");
-const authMiddleware = require("../middlewares/auth");
+
+/**
+ * Verify Token
+ */
+function verifyJWT(req, res, next) {
+    const token = req.headers['x-access-token'];
+    jwt.verify(token, authConfig.secret, (err, decoded) =>{
+        if(err) return res.status(401).end();
+
+        req.userId = decoded.userId;
+        next();
+    })
+}
 
 /**
  * return all people
@@ -58,15 +70,11 @@ router.post('/pessoa', async function (req, res) {
     }
 });
 
-/**
- * router authMiddleware
- */
- router.use(authMiddleware);
 
 /**
  * delete a person by id
  */
- router.delete('/pessoa/:id', async function (req, res) {
+ router.delete('/pessoa/:id', verifyJWT, async function (req, res) {
     const { id } = req.params;
     const verify_id = await client.pessoa.findUnique({
         where: {id: Number(id)}
@@ -86,7 +94,7 @@ router.post('/pessoa', async function (req, res) {
 /**
  * Alter a person
  */
-router.put('/pessoa/:id', async (req, res) => {
+router.put('/pessoa/:id', verifyJWT, async (req, res) => {
     const { id } = req.params;
     const {nome, telefone, cargo, idade } = req.body;
     
@@ -117,4 +125,4 @@ router.put('/pessoa/:id', async (req, res) => {
 /**
  * router
  */
-module.exports = router;
+module.exports = app => app.use(router);
