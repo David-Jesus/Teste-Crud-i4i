@@ -18,7 +18,7 @@ function verifyJWT(req, res, next) {
 /**
  * return all people
  */
- router.get('/pessoas', async function(req, res){
+ router.get('/pessoas', verifyJWT, async function(req, res){
     const pessoas = await client.pessoa.findMany();
     
     if(pessoas == "") {
@@ -32,7 +32,7 @@ function verifyJWT(req, res, next) {
 /**
  * return a person by id
  */
-router.get('/pessoa/:id', async function (req, res){
+router.get('/pessoa/:id', verifyJWT, async function (req, res){
     const { id } = req.params;
     const pessoa = await client.pessoa.findUnique({
         where: {id: Number(id)}
@@ -49,7 +49,7 @@ router.get('/pessoa/:id', async function (req, res){
 /**
  * insert a person
  */
-router.post('/pessoa', async function (req, res) {
+router.post('/pessoa', verifyJWT, async function (req, res) {
     const {nome, telefone, cargo, idade } = req.body;
 
     const newPessoa = await client.pessoa.create({
@@ -119,7 +119,6 @@ router.put('/pessoa/:id', verifyJWT, async (req, res) => {
         })
         return res.status(200).json({result})
     }
-
 }) 
 
 /**

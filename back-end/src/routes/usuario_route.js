@@ -3,13 +3,26 @@ const router = Router();
 const client = require("../database/client");
 const jwt    = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const authConfig =  require("../config/auth");
-const authMiddleware = require("../middlewares/auth");
+const authConfig =  require("../config/auth.json");
+
+
+/**
+ * Verify Token
+ */
+function verifyJWT(req, res, next) {
+    const token = req.headers['x-access-token'];
+    jwt.verify(token, authConfig.secret, (err, decoded) =>{
+        if(err) return res.status(401).end();
+
+        req.userId = decoded.userId;
+        next();
+    })
+}
 
 /**
  * return all users
  */
- router.get('/usuarios', async function(req, res){
+ router.get('/usuarios', verifyJWT, async function(req, res){
     const usuarios = await client.usuario.findMany();
     
     if(usuarios == "") {
@@ -23,7 +36,7 @@ const authMiddleware = require("../middlewares/auth");
 /**
  * return a user by id
  */
-router.get('/usuario/:id', async function (req, res){
+router.get('/usuario/:id', verifyJWT, async function (req, res){
     const { id } = req.params;
     const usuario = await client.usuario.findUnique({
         where: {id: Number(id)}
@@ -41,7 +54,7 @@ router.get('/usuario/:id', async function (req, res){
 /**
  * insert a user
  */
-router.post('/usuario', async function (req, res) {
+router.post('/usuario', verifyJWT, async function (req, res) {
     const { id_pessoa, email} = req.body;
     const senha = bcrypt.hashSync(req.body.senha, 10);
 
@@ -80,11 +93,10 @@ router.post('/usuario', async function (req, res) {
 });
 
 
-
 /**
  * Verify login
  */
-router.post('/login', async function(req, res) {
+router.post('/login', verifyJWT, async function(req, res) {
     const email = req.body.email;
     const senha = req.body.senha;
 
@@ -95,31 +107,27 @@ router.post('/login', async function(req, res) {
     })
 
     if(!verify_login) {
-        return res.status(400).json({"mesage": "Usuário não possui cadastro"});
+        return res.status(401).json({"mesage": "Usuário não possui cadastro"});
     } 
     else {
 
         if(!bcrypt.compareSync(senha, verify_login.senha)){
-            return res.status(404).json({"mesage": "Email ou senha incorretos!"});
+            return res.status(401).json({"mesage": "Email ou senha incorretos!"});
         }
         else {
             const token = jwt.sign({id: verify_login.id}, authConfig.secret, {
-                expiresIn: 86400,
+                expiresIn: 300,
             })
-            return res.send({verify_login, token});
+            return res.json({auth: true, token});
         }
     }
 });
 
-/**
- * router authMiddleware
- */
-router.use(authMiddleware);
 
 /**
  * delete a user by id
  */
- router.delete('/usuario/:id', async function (req, res) {
+ router.delete('/usuario/:id', verifyJWT, async function (req, res) {
     const { id } = req.params;
     const verify_id = await client.usuario.findUnique({
         where: {id: Number(id)}
@@ -139,7 +147,7 @@ router.use(authMiddleware);
 /**
  * Alter a user
  */
-router.put('/usuario/:id', async (req, res) => {
+router.put('/usuario/:id', verifyJWT, async (req, res) => {
     const { id } = req.params;
     const {id_pessoa, email} = req.body;
     const senha = bcrypt.hashSync(req.body.senha, 10);
@@ -169,4 +177,4 @@ router.put('/usuario/:id', async (req, res) => {
 /**
  * router
  */
-module.exports = router;
+module.exports = app => app.use(router);
