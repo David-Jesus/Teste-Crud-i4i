@@ -1,11 +1,10 @@
   
 import React from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
-// import cadastroPessoa from './page/upload/upload';
-// import ListaProdutos from './page/listaProdutos/index';
-import Login from './pages/login/login'
-import ListaUsuarios from './pages/listaUsuarios/listaUsuarios'
-import App  from './App';
+import Login from './pages/login/login';
+import ListaUsuarios from './pages/listaUsuarios/listaUsuarios';
+import CadastroUsuario from './pages/cadastroUsuario/cadastroUsuario';
+import CadastroPessoa from './pages/cadastroPessoa/cadastroPessoa';
 
 function Routes() {
     return (
@@ -13,6 +12,8 @@ function Routes() {
             <Switch>
                {/* <Route path='/upload' exact={true} component={Uploads} /> */}
                <Route path='/lista-usuarios' exact={true} component={ListaUsuarios} />
+               <Route path='/cadastro-usuario' exact={true} component={CadastroUsuario} />
+               <Route path='/cadastro-pessoa' exact={true} component={CadastroPessoa} />
                <Route path='/login' exact={true} component={Login} />
             </Switch>
         </BrowserRouter>

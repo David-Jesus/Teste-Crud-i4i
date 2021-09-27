@@ -1,6 +1,8 @@
 const Router   = require("express");
 const router   = Router();
 const client = require("../database/client");
+const jwt    = require("jsonwebtoken");
+const authConfig =  require("../config/auth.json");
 
 /**
  * Verify Token

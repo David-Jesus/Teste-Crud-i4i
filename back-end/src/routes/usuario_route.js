@@ -55,9 +55,10 @@ router.get('/usuario/:id', verifyJWT, async function (req, res){
  * insert a user
  */
 router.post('/usuario', verifyJWT, async function (req, res) {
-    const { id_pessoa, email} = req.body;
+    const { email} = req.body;
     const senha = bcrypt.hashSync(req.body.senha, 10);
-
+    const id_pessoa = parseInt(req.body.id_pessoa)
+    
     const verify_id = await client.pessoa.findUnique({
         where: {id: Number(id_pessoa)}
     })
@@ -66,12 +67,20 @@ router.post('/usuario', verifyJWT, async function (req, res) {
        return res.status(404).json({"mesage": "Não foi possivel cadastrar, não possui cadastro de pessoa!"});
     } 
 
+    const verify_idpessoa_user = await client.usuario.findUnique({
+        where: {id_pessoa: Number(id_pessoa)}
+    })
+
+    if(verify_idpessoa_user) {
+        return res.status(422).json({"mesage": "Não foi possivel cadastrar, a pessoa já possui cadastro!"});
+     } 
+
     const verify_email = await client.usuario.findUnique({
         where: {email: String(email)}
     })
 
     if (verify_email) {
-        return res.status(200).json({"mesage": "Usuário já possui cadastro com este e-mail!"})
+        return res.status(422).json({"mesage": "Usuário já possui cadastro com este e-mail!"});
     }
     else{
     const newUser = await client.usuario.create({
@@ -116,7 +125,7 @@ router.post('/login', async function(req, res) {
         }
         else {
             const token = jwt.sign({id: verify_login.id}, authConfig.secret, {
-                expiresIn: 15,
+                expiresIn: 86400,
             })
             return res.json({auth: true, token: token});
         }
@@ -150,6 +159,7 @@ router.post('/login', async function(req, res) {
 router.put('/usuario/:id', verifyJWT, async (req, res) => {
     const { id } = req.params;
     const {id_pessoa, email} = req.body;
+    console.log(id_pessoa, email, senha);
     const senha = bcrypt.hashSync(req.body.senha, 10);
 
     const verify_id = await client.usuario.findUnique({

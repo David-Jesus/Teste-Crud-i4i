@@ -18,13 +18,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CadastroPessoa() {
+export default function CadastroUsuario() {
 
-  const [nome, setNome] = useState('');
-  const [telefone, setTelefone] = useState('');
-  const [idade, setIdade] = useState('');
-  const [cargo, setCargo] = useState('');
-  
+  const [id_pessoa, setId] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  // const [data_criacao, setData] = useState(new Date().toISOString());
   const token = window.sessionStorage.getItem('token');
   const config = {
     headers: {
@@ -36,22 +35,20 @@ export default function CadastroPessoa() {
     e.preventDefault();
 
     const dados = {
-      nome,
-      telefone,
-      idade,
-      cargo
+      id_pessoa,
+      email,
+      senha
     };
 
     try {
-      if (dados.nome !== "" && dados.telefone !== "" && dados.idade !== ""  && dados.cargo !== "") {
-        const save = api.post('/pessoa', dados, config);
+      if (dados.idpessoa !== "" && dados.email !== "" && dados.senha !== "") {
+        const save = api.post('/usuario', dados, config);
 
         if ((await save).status == 200) {
           alert('Salvo com sucesso');
-          setNome('');
-          setTelefone('');
-          setIdade('');
-          setCargo('');
+          setId('');
+          setEmail('');
+          setSenha('');
         }
 
         if ((await save).status == 422) {
@@ -63,7 +60,7 @@ export default function CadastroPessoa() {
         }
 
         if ((await save).status == 404) {
-          alert('Não foi possivel cadastrar, pessoa '+ nome + 'não possui cadastro!');
+          alert('Não foi possivel cadastrar, pessoa '+ id_pessoa + 'não possui cadastro!');
         }
       }
       else {
@@ -81,42 +78,34 @@ export default function CadastroPessoa() {
 
       <div id="container_usuario">
 
-        <h1>Cadastro de Pessoa</h1>
+        <h1>Cadastro de Usuário</h1>
 
         <form className={classes.root} noValidate autoComplete="off" onSubmit={handleCadastro}>
 
           <div >
             <TextField
-              id="nome"
-              label="Nome"
-              defaultValue="Nome"
+              id="id"
+              label="Pessoa"
+              defaultValue="Pessoa"
               variant="outlined"
-              value={nome}
-              onChange={e => setNome(e.target.value)}
+              value={id_pessoa}
+              onChange={e => setId(e.target.value)}
             />
 
             <TextField
-              id="telefone "
-              label="Telefone"
-              defaultValue="Telefone"
+              id="email"
+              label="E-mail"
+              defaultValue="Código"
               variant="outlined"
-              value={telefone}
-              onChange={e => setTelefone(e.target.value)}
+              value={email}
+              onChange={e => setEmail(e.target.value)}
             />
 
             <TextField
-              id="idade"
-              label="Idade"
-              value={idade}
-              onChange={e => setIdade(e.target.value)}
-              variant="outlined"
-            />
-
-            <TextField
-              id="cargo"
-              label="Cargo"
-              value={cargo}
-              onChange={e => setCargo(e.target.value)}
+              id="senha"
+              label="Senha"
+              value={senha}
+              onChange={e => setSenha(e.target.value)}
               variant="outlined"
             />
           </div>

@@ -22,7 +22,7 @@ model Pessoa {
 model Usuario {
   id Int @id @default(autoincrement())
   pessoa Pessoa @relation(fields: [id_pessoa], references: [id])
-  id_pessoa Int
+  id_pessoa Int @unique
   email String @unique
   senha String
   data_criacao DateTime @db.Date @default(now())

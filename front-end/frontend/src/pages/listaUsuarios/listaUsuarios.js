@@ -47,13 +47,19 @@ export default function ListaUsuarios() {
     }
   }
 
-  async function handleDeleteUsuarios(idusuario) {
-    try {
-      await api.delete(`usuario/${idusuario}`, {});
-      setUsuarios(usuarios.filter(usuario => usuario.idusuario !== idusuario));
-    } catch (error) {
-      alert('Erro ao deletar cliente');
-    }
+  // async function handleDeleteUsuarios(idusuario) {
+  async function handleDeleteUsuarios() {
+      if(1 == 1){
+        setState({ redirect: true });
+      }
+    // try {
+    
+      
+    //   await api.delete(`usuario/${idusuario}`, {});
+    //   setUsuarios(usuarios.filter(usuario => usuario.idusuario !== idusuario));
+    // } catch (error) {
+    //   alert('Erro ao deletar cliente');
+    // }
   }
 
   useEffect(() => {
@@ -64,18 +70,20 @@ export default function ListaUsuarios() {
   }, []);
 
   if (redirect) {
-    return <Redirect to='login' />;
+    return <Redirect to='cadastro-usuario' />;
   }
   return ( 
     <div id="lista_cliente">
-      <Button variant="contained" color="secondary" type="button" onClick={() => handleDeleteUsuarios()}>Deletar</Button>                                  
+    <div id="lista-cliente-header">
+        <Button variant="contained" color="secondary" type="button" onClick={() => handleDeleteUsuarios()}>Deletar</Button>
+    </div>                           
 
       <TableContainer component={Paper} id="tabela">
         <Table className={classes.table} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
               <StyledTableCell align="center" >Código Usuário</StyledTableCell >
-              <StyledTableCell align="center">Códido do Pessoa</StyledTableCell >
+              <StyledTableCell align="center">Códido da Pessoa</StyledTableCell >
               <StyledTableCell align="center">EMAIL</StyledTableCell >
               <StyledTableCell align="center">Data de Criação</StyledTableCell >
               <StyledTableCell align="center"></StyledTableCell >
