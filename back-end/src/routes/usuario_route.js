@@ -116,7 +116,7 @@ router.post('/login', async function(req, res) {
         }
         else {
             const token = jwt.sign({id: verify_login.id}, authConfig.secret, {
-                expiresIn: 600,
+                expiresIn: 15,
             })
             return res.json({auth: true, token: token});
         }
