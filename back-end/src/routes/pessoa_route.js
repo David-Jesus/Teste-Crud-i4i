@@ -52,11 +52,22 @@ router.get('/pessoa/:id', verifyJWT, async function (req, res){
  * insert a person
  */
 router.post('/pessoa', verifyJWT, async function (req, res) {
-    const {nome, telefone, cargo, idade } = req.body;
+    const {nome, cpf, telefone, cargo, idade } = req.body;
 
+    const verify_cpf = await client.pessoa.findUnique({
+        where: {cpf: Number(cpf)}
+    })
+
+    if(verify_cpf) {
+       return res.status(404).json({"mesage": "Não foi possivel cadastra, já há registro com este cpf!"});
+    } 
+
+    else {
+        
     const newPessoa = await client.pessoa.create({
         data: {
             nome,
+            cpf,
             telefone,
             cargo,
             idade
@@ -70,6 +81,7 @@ router.post('/pessoa', verifyJWT, async function (req, res) {
         console.log('erro')
         return res.status(401).json({});
     }
+}
 });
 
 
