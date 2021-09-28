@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import api from '../service/api';
 import Button from '@material-ui/core/Button';
 import '../cadastroUsuario/index.css';
-
+import Input from './input_cpf';
+import InputTelefone from './input_telefone';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
 export default function CadastroPessoa() {
 
   const [nome, setNome] = useState('');
+  const [cpf, setCpf] = useState('');
   const [telefone, setTelefone] = useState('');
   const [idade, setIdade] = useState('');
   const [cargo, setCargo] = useState('');
@@ -32,18 +34,21 @@ export default function CadastroPessoa() {
     }
   }
 
+
   async function handleCadastro(e) {
     e.preventDefault();
 
     const dados = {
       nome,
+      cpf,
       telefone,
       idade,
       cargo
     };
-
+  
     try {
-      if (dados.nome !== "" && dados.telefone !== "" && dados.idade !== ""  && dados.cargo !== "") {
+
+      if (dados.nome !== "" && dados.cpf !== "" && dados.telefone !== "" && dados.idade !== ""  && dados.cargo !== "") {
         const save = api.post('/pessoa', dados, config);
 
         if ((await save).status == 200) {
@@ -55,14 +60,10 @@ export default function CadastroPessoa() {
         }
 
         if ((await save).status == 422) {
-          alert('Usuário já possui cadastro');
-        }
-        
-        if ((await save).status == 401) {
-          alert('Teste');
+          alert('Usuário já possui cadastro!');
         }
 
-        if ((await save).status == 404) {
+        if ((await save).status == 401) {
           alert('Não foi possivel cadastrar, pessoa '+ nome + 'não possui cadastro!');
         }
       }
@@ -77,15 +78,18 @@ export default function CadastroPessoa() {
   const classes = useStyles();
 
   return (
-    <div id="usuario_container">
+    <div id="pessoa_container">
 
-      <div id="container_usuario">
+      <div id="container_pessoa">
 
         <h1>Cadastro de Pessoa</h1>
 
         <form className={classes.root} noValidate autoComplete="off" onSubmit={handleCadastro}>
 
           <div >
+
+          <Input value={cpf} onChange={(event) => setCpf(event.target.value)}/>
+
             <TextField
               id="nome"
               label="Nome"
@@ -95,15 +99,8 @@ export default function CadastroPessoa() {
               onChange={e => setNome(e.target.value)}
             />
 
-            <TextField
-              id="telefone "
-              label="Telefone"
-              defaultValue="Telefone"
-              variant="outlined"
-              value={telefone}
-              onChange={e => setTelefone(e.target.value)}
-            />
-
+          <InputTelefone value={telefone} onChange={(event) => setTelefone(event.target.value)}/>
+        
             <TextField
               id="idade"
               label="Idade"
