@@ -13,6 +13,7 @@ generator client {
 model Pessoa {
   id Int @id @default(autoincrement())
   nome String
+  cpf String @unique
   telefone String
   idade Int
   cargo String
