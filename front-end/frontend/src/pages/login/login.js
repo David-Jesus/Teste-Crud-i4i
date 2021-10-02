@@ -73,7 +73,7 @@ export default function SignIn() {
   const classes = useStyles();
 
   if (redirect) {
-    return <Redirect to='lista-usuarios' />;
+    return <Redirect to='usuario/?id=6' />;
   }
 
   return (
