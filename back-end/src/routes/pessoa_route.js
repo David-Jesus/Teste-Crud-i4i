@@ -51,11 +51,11 @@ router.get('/pessoa/:id', verifyJWT, async function (req, res){
 /**
  * insert a person
  */
-router.post('/pessoa', verifyJWT, async function (req, res) {
+router.post('/pessoa', async function (req, res) {
     const {nome, cpf, telefone, cargo, idade } = req.body;
 
     const verify_cpf = await client.pessoa.findUnique({
-        where: {cpf: Number(cpf)}
+        where: {cpf: String(cpf)}
     })
 
     if(verify_cpf) {
@@ -90,6 +90,7 @@ router.post('/pessoa', verifyJWT, async function (req, res) {
  */
  router.delete('/pessoa/:id', verifyJWT, async function (req, res) {
     const { id } = req.params;
+    
     const verify_id = await client.pessoa.findUnique({
         where: {id: Number(id)}
     })
@@ -97,6 +98,15 @@ router.post('/pessoa', verifyJWT, async function (req, res) {
     if(!verify_id) {
         res.status(404).json({"mesage": "Não foi possivel excluir o registro"});
     } 
+
+    const verify_user_with_id = await client.usuario.findUnique({
+        where: {id_pessoa: Number(id)}
+    });
+
+    if(verify_user_with_id){
+        res.status(405).json({"mesage": "Não foi possivel excluir o registro, existe um usuário cadastrado com essa pessoa exclua o usuário antes de excluir o cadastro de pessoa"});
+    }
+
     else {
     const result = await client.pessoa.delete({
         where: {id: Number(id)}
