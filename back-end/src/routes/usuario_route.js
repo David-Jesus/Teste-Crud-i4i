@@ -54,7 +54,7 @@ router.get('/usuario/:id', verifyJWT, async function (req, res){
 /**
  * insert a user
  */
-router.post('/usuario', verifyJWT, async function (req, res) {
+router.post('/usuario',  async function (req, res) {
     const { email} = req.body;
     const senha = bcrypt.hashSync(req.body.senha, 10);
     const id_pessoa = parseInt(req.body.id_pessoa)
@@ -125,7 +125,7 @@ router.post('/login', async function(req, res) {
         }
         else {
             const token = jwt.sign({id: verify_login.id}, authConfig.secret, {
-                expiresIn: 86400,
+                expiresIn: 84300,
             })
             return res.json({auth: true, token: token});
         }
