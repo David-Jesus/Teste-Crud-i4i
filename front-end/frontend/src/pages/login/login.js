@@ -67,7 +67,7 @@ export default function SignIn() {
         alert('Preencha todos os campos!')
       }
     } catch (error) {
-      alert("Usuário não cadastrado!");
+      alert("Usuário não cadastrado!"+error);
     }
   }
   const classes = useStyles();

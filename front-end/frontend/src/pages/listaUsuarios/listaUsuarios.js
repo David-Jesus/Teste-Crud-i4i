@@ -10,6 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import api from '../service/api';
 import Button from '@material-ui/core/Button';
 import { Route, useHistory, Switch, Redirect } from "react-router-dom";
+import { AxiosResponse, AxiosError } from 'axios'
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -48,18 +49,24 @@ export default function ListaUsuarios() {
   }
 
   // async function handleDeleteUsuarios(idusuario) {
-  async function handleDeleteUsuarios() {
-      if(1 == 1){
+  async function handleDeleteUsuarios(idusuario) {
+    try {
+      const del = await api.delete(`usuario/${idusuario}`, config);
+
+      if((await del).status === 200){
+        alert("Cadastro excluído com sucesso!")
+         setUsuarios(usuarios.filter(usuario => usuario.id !== idusuario));
+      }
+      if((await del).status === 401){
+        alert("Necessário realizar o login novamente!")
         setState({ redirect: true });
       }
-    // try {
-    
-      
-    //   await api.delete(`usuario/${idusuario}`, {});
-    //   setUsuarios(usuarios.filter(usuario => usuario.idusuario !== idusuario));
-    // } catch (error) {
-    //   alert('Erro ao deletar cliente');
-    // }
+    } catch (AxiosError) {
+      if(AxiosError.response.status === 401){
+        alert("sua sessão expirou, necessário realizar o login novamente!")
+        setState({ redirect: true });
+      }
+    }
   }
 
   useEffect(() => {
@@ -70,7 +77,7 @@ export default function ListaUsuarios() {
   }, []);
 
   if (redirect) {
-    return <Redirect to='cadastro-usuario' />;
+    return <Redirect to='login' />;
   }
   return ( 
     <div id="lista_cliente">
@@ -103,7 +110,7 @@ export default function ListaUsuarios() {
                   <Button variant="contained" color="secondary" type="button" onClick={() => handleDeleteUsuarios(usuario.idusuario)}>Alter</Button>                  
                   </StyledTableCell >   
                   <StyledTableCell align="center">
-                  <Button variant="contained" color="secondary" type="button" onClick={() => handleDeleteUsuarios(usuario.idusuario)}>Deletar</Button>                  
+                  <Button variant="contained" color="secondary" type="button" onClick={() => handleDeleteUsuarios(usuario.id)}>Deletar</Button>                  
                   </StyledTableCell >
               </StyledTableRow >
             ))}
