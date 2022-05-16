@@ -11,7 +11,7 @@ app.use(cors());
 require('./routes/usuario_route')(app);
 require('./routes/pessoa_route')(app);
 // app.use(route_usuario);
-// app.use(route_pessoa);
+//app.use(route_pessoa);
 
 
 
