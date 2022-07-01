@@ -92,7 +92,6 @@ router.post('/usuario',  async function (req, res) {
         });
 
     if (newUser != "") {
-        console.log(newUser)
         return res.status(200).json(newUser);
     }
     else {
