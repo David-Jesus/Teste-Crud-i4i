@@ -75,7 +75,7 @@ router.post('/pessoa', async function (req, res) {
         });
     
     if (newPessoa != "") {
-        return res.status(200).json(newPessoa);
+        return res.status(201).json(newPessoa);
     }
     else {
         console.log('erro')
