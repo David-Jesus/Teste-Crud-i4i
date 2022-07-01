@@ -28,4 +28,3 @@ jobs:
     # Runs a single command using the runners shell
     - name: Send greeti
       run: git pull --force
-           git push:master --force
